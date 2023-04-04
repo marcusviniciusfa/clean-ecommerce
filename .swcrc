@@ -1,0 +1,16 @@
+{
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true,
+      "minify": true,
+      "module": {
+        "type": "commonjs",
+        "strictMode": true
+      },
+      "target": "es2017"
+    }
+  },
+  "exclude": [".*\\.spec\\.ts$"]
+}
