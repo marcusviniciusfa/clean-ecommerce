@@ -6,5 +6,6 @@ export default defineConfig({
     coverage: {
       all: true,
     },
+    reporters: 'verbose'
   },
 })
