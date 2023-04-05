@@ -1,62 +1,51 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-export function validate (str) {
+// eslint-disable-next-line prettier/prettier
+const CPF_PATTERN = /(\d{3})(\.?)(\d{3})(\.?)(\d{3})(\-?)(\d{2})/
 
-	if (str !== null) {
-        if (str !== undefined) {
-            if (str.length >= 11 || str.length <= 14){
+export function validateCpf(rawCpf: string) {
+  if (!rawCpf) {
+    throw new Error('o valor para CPF está vazio')
+  }
+  if (typeof rawCpf !== 'string') {
+    throw new Error('o valor para CPF deve ser do tipo string')
+  }
+  if (!CPF_PATTERN.test(rawCpf)) {
+    throw new Error('o valor para CPF é diferente do padrão xxx.xxx.xxx-xx')
+  }
+  const cleanCpf = clearCpf(rawCpf)
+  if (isBlockedCpf(cleanCpf)) {
+    return false
+  }
+  const firstCheckDigit = calculateCheckDigits(cleanCpf, 10)
+  const lastCheckDigit = calculateCheckDigits(cleanCpf, 11)
+  return isCpfValidity(cleanCpf, firstCheckDigit, lastCheckDigit)
+}
 
-                str=str
-                    .replace('.','')
-                    .replace('.','')
-                    .replace('-','')
-                    .replace(" ","");
+function clearCpf(cpf: string): string {
+  return cpf.replace(/\D/g, '')
+}
 
-                if (!str.split("").every(c => c === str[0])) {
-                    try{
-                        let     d1, d2;
-                        let     dg1, dg2, rest;
-                        let     digito;
-                            let     nDigResult;
-                        d1 = d2 = 0;
-                        dg1 = dg2 = rest = 0;
+function isBlockedCpf(cpf: string): boolean {
+  const [firstDigit] = cpf
+  return [...cpf].every((digit) => digit === firstDigit)
+}
 
-                        for (let nCount = 1; nCount < str.length -1; nCount++) {
-                            // if (isNaN(parseInt(str.substring(nCount -1, nCount)))) {
-                            // 	return false;
-                            // } else {
+function calculateCheckDigits(cpf: string, factor: number) {
+  let total = 0
+  for (const digit of cpf) {
+    if (factor >= 2) {
+      total += Number(digit) * factor--
+    }
+  }
+  const rest = total % 11
+  return rest < 2 ? 0 : 11 - rest
+}
 
-                                digito = parseInt(str.substring(nCount -1, nCount));
-                                d1 = d1 + ( 11 - nCount ) * digito;
-
-                                d2 = d2 + ( 12 - nCount ) * digito;
-                            // }
-                        };
-
-                        rest = (d1 % 11);
-
-                        dg1 = (rest < 2) ? dg1 = 0 : 11 - rest;
-                        d2 += 2 * dg1;
-                        rest = (d2 % 11);
-                        if (rest < 2)
-                            dg2 = 0;
-                        else
-                            dg2 = 11 - rest;
-
-                            let nDigVerific = str.substring(str.length-2, str.length);
-                        nDigResult = "" + dg1 + "" + dg2;
-                        return nDigVerific == nDigResult;
-                    }catch (e){
-                        console.error("Erro !"+e);
-
-                        return false;
-                    }
-                } else return false
-
-            }else return false;
-        }
-
-
-	} else return false;
-
+function isCpfValidity(
+  cpf: string,
+  firstCheckDigit: number,
+  lastCheckDigit: number,
+) {
+  const inputCheckDigits = cpf.slice(9)
+  const calculatedCheckDigits = `${firstCheckDigit}${lastCheckDigit}`
+  return inputCheckDigits === calculatedCheckDigits
 }
