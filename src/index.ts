@@ -1,4 +1,3 @@
-// eslint-disable-next-line prettier/prettier
 const CPF_PATTERN = /(\d{3})(\.?)(\d{3})(\.?)(\d{3})(\-?)(\d{2})/
 
 export function validateCpf(rawCpf: string) {
@@ -15,8 +14,8 @@ export function validateCpf(rawCpf: string) {
   if (isBlockedCpf(cleanCpf)) {
     return false
   }
-  const firstCheckDigit = calculateCheckDigits(cleanCpf, 10)
-  const lastCheckDigit = calculateCheckDigits(cleanCpf, 11)
+  const firstCheckDigit = calculateCheckDigit(cleanCpf, 10)
+  const lastCheckDigit = calculateCheckDigit(cleanCpf, 11)
   return isCpfValidity(cleanCpf, firstCheckDigit, lastCheckDigit)
 }
 
@@ -29,7 +28,7 @@ function isBlockedCpf(cpf: string): boolean {
   return [...cpf].every((digit) => digit === firstDigit)
 }
 
-function calculateCheckDigits(cpf: string, factor: number) {
+function calculateCheckDigit(cpf: string, factor: number) {
   let total = 0
   for (const digit of cpf) {
     if (factor >= 2) {
