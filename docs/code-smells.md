@@ -1,4 +1,4 @@
-# Code Smells
+## Code Smells
 
 1. Nomes estranhos
    * [x] Renomear variável, método, classe, arquivo

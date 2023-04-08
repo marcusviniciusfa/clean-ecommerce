@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { validateCpf } from '../src'
+import { validateCpf } from '.'
 
 describe('testes do validador de CPF', () => {
   // Given
@@ -22,9 +22,9 @@ describe('testes do validador de CPF', () => {
 
   const invalidCpfs: string[] = [
     '987.654.321-01',
-    '714.602.380-02',
+    '714.602.380-00',
     '313.030.210-73',
-    '144.796.170-61',
+    '144.796.170-70',
   ]
 
   it.each(invalidCpfs)(

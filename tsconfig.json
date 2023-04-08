@@ -13,9 +13,10 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true
   },
-  "include": ["src", "tests/index.spec.ts"],
+  "include": ["src", "src/index.spec.ts"],
   "exclude": ["src/**/*.spec.ts", "tests"],
   "ts-node": {
+    "require": ["dotenv/config"],
     "swc": true
   }
 }
