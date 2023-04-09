@@ -1,4 +1,4 @@
-## Code Smells
+<h2 align="center">Code Smells</h2>
 
 1. Nomes estranhos
    * [x] Renomear variável, método, classe, arquivo

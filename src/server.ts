@@ -18,53 +18,76 @@ const postgresClient = new Client({
 postgresClient
   .connect()
   .then(() => {
-    console.log(`database is connected ✅`)
+    console.log(`[log] database is connected ✅`)
     app.listen(SERVER_PORT, () => {
-      console.log(`server listening 👂 on port ${SERVER_PORT}`)
+      console.log(`[log] server listening 👂 on port ${SERVER_PORT}`)
     })
   })
-  .catch((error) => {
-    console.log('database is not connected ❌')
-    console.error(error)
+  .catch((_error) => {
+    console.error('[log] database is not connected ❌')
   })
+
+postgresClient.on('error', () => {
+  console.error('[log] database is not connected ❌')
+  process.exit(1)
+})
 
 app.post('/checkout', async (req: Request, res: Response) => {
   const output: Output = {
     total: 0,
     code: 201,
+    freight: 0,
   }
-  const { items, cpf, coupon } = req.body
+  const { items, cpf, coupon, from, to } = req.body
   const isValid = validateCpf(cpf)
-  if (!isValid) {
-    output.code = 400
-    output.message = 'invalid CPF'
-    return res.status(output.code).end()
-  }
-  if (items) {
-    for (const item of items) {
-      const {
-        rows: [product],
-      } = await postgresClient.query('select * from products where id = $1;', [
-        item.id,
-      ])
-      output.total += parseFloat(product.price) * item.quantity
+  try {
+    if (!isValid) {
+      throw new Error('invalid cpf')
     }
-    if (coupon) {
-      const {
-        rows: [validCoupon],
-      } = await postgresClient.query('select * from coupons where code = $1;', [
-        coupon,
-      ])
-      if (validCoupon) {
-        output.total -= output.total * (Number(validCoupon.percentage) / 100)
+    const addedItems: number[] = []
+    if (items) {
+      for (const item of items) {
+        if (item.quantity <= 0) {
+          throw new Error('invalid quantity')
+        }
+        if (addedItems.includes(item.id)) {
+          throw new Error('duplicated items')
+        }
+        const {
+          rows: [product],
+        } = await postgresClient.query('select * from products where id = $1;', [item.id])
+        if (product.width <= 0 || product.height <= 0 || product.depth <= 0 || Number(product.weight) <= 0) {
+          throw new Error('invalid dimension')
+        }
+        addedItems.push(item.id)
+        const volume = (product.width / 100) * (product.height / 100) * (product.depth / 100)
+        const density = Number(product.weight) / volume
+        const distance = 1000
+        output.total += Number(product.price) * item.quantity
+        const itemFreight = distance * volume * (density / 100)
+        output.freight += Math.max(itemFreight, 10) * item.quantity
+      }
+      if (coupon) {
+        const {
+          rows: [existentCoupon],
+        } = await postgresClient.query('select * from coupons where code = $1;', [coupon])
+        if (existentCoupon && existentCoupon.expires_at.getTime() >= new Date().getTime()) {
+          output.total -= output.total * (Number(existentCoupon.percentage) / 100)
+        }
+      }
+      if (from && to) {
+        output.total += output.freight
       }
     }
+  } catch (error: any) {
+    output.code = 400
+    return res.status(output.code).json({ message: error.message })
   }
   res.status(output.code).json(output)
 })
 
 interface Output {
   total: number
-  message?: string
   code: number
+  freight: number
 }
