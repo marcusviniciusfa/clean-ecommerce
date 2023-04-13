@@ -9,7 +9,6 @@
 3. `npm run ts-node:dev` faça a conexão do banco de dados e inicie o servidor
 4. execute os testes
 
-
 ## Base de dados
 
 ### Docker
