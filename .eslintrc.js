@@ -21,5 +21,7 @@ module.exports = {
     '.eslintrc.js',
     'commitlint.config.js'
   ],
-  rules: {},
+  rules: {
+    '@typescript-eslint/no-var-requires': 'off'
+  },
 };

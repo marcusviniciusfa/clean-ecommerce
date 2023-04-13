@@ -13,7 +13,7 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true
   },
-  "include": ["src", "src/index.spec.ts"],
+  "include": ["src", "src/validate-cpf.spec.ts"],
   "exclude": ["src/**/*.spec.ts", "tests"],
   "ts-node": {
     "require": ["dotenv/config"],

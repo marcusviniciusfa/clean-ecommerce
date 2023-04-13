@@ -39,11 +39,7 @@ function calculateCheckDigit(cpf: string, factor: number) {
   return rest < 2 ? 0 : 11 - rest
 }
 
-function isCpfValidity(
-  cpf: string,
-  firstCheckDigit: number,
-  lastCheckDigit: number,
-) {
+function isCpfValidity(cpf: string, firstCheckDigit: number, lastCheckDigit: number) {
   const inputCheckDigits = cpf.slice(9)
   const calculatedCheckDigits = `${firstCheckDigit}${lastCheckDigit}`
   return inputCheckDigits === calculatedCheckDigits
