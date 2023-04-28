@@ -1,16 +1,21 @@
+import { randomUUID } from 'node:crypto'
 import sinon from 'sinon'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Checkout } from './checkout'
 import { CurrencyGateway } from './currency-gateway'
 import { CurrencyGatewayHttp } from './currency-gateway-http'
+import { GetOrder } from './get-order'
+import { OrderRepositoryDatabase } from './order-repository-database'
 import { ProductRepository } from './product-repository'
 
 describe('', () => {
   let checkout: Checkout
+  let getOrder: GetOrder
 
   beforeEach(() => {
     vi.resetAllMocks()
     sinon.restore()
+    getOrder = new GetOrder()
     checkout = new Checkout()
   })
 
@@ -26,6 +31,7 @@ describe('', () => {
   })
 
   it('deve criar um pedido com 3 produtos', async () => {
+    const id = randomUUID()
     const input = {
       cpf: '987.654.321-00',
       items: [
@@ -33,8 +39,10 @@ describe('', () => {
         { id: 2, quantity: 1 }, // 1000
         { id: 3, quantity: 3 }, // 30
       ],
+      orderId: id,
     }
-    const output = await checkout.execute(input)
+    await checkout.execute(input)
+    const output = await getOrder.execute(id)
     expect(output).toHaveProperty('total', 6090)
   })
 
@@ -212,5 +220,23 @@ describe('', () => {
     }
     const output = await checkout.execute(input)
     expect(output.total).toBe(24150)
+  })
+
+  it('deve criar um pedido e verificar o código do pedido', async () => {
+    const id = randomUUID()
+    const input = {
+      cpf: '987.654.321-00',
+      items: [
+        { id: 1, quantity: 1 }, // 5000
+        { id: 2, quantity: 1 }, // 1000
+        { id: 3, quantity: 3 }, // 30
+      ],
+      orderId: id,
+    }
+    // sinon.stub(OrderRepositoryDatabase.prototype, 'count').resolves(1)
+    OrderRepositoryDatabase.prototype.count = () => Promise.resolve(1)
+    await checkout.execute(input)
+    const output = await getOrder.execute(id)
+    expect(output).toHaveProperty('code', '202300000001')
   })
 })

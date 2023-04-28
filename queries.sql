@@ -1,5 +1,12 @@
 -- Active: 1680880545588@@127.0.0.1@5432@clean_ecommerce
 
+drop table items;
+drop table orders;
+drop table coupons;
+drop table products;
+
+-- product
+
 create table products (
   id integer,
   description text,
@@ -17,9 +24,7 @@ insert into products (id, description, price, width, height, depth, weight, curr
 insert into products (id, description, price, width, height, depth, weight, currency) values (4, 'd', 30, -10, 10, 10, 0.9, 'BRL');
 insert into products (id, description, price, width, height, depth, weight, currency) values (5, 'b', 1000, 50, 50, 50, 22, 'USD');
 
-select * from products;
-
-drop table products;
+-- coupon
 
 create table coupons (
   code text,
@@ -30,8 +35,21 @@ create table coupons (
 insert into coupons (code, percentage, expires_at) values ('VALE20', 20, now() + interval '1 year');
 insert into coupons (code, percentage, expires_at) values ('BLACKFRIDAY', 50, now() - interval '1 year');
 
-delete from coupons;
+-- orders
 
-select * from coupons;
+create table orders (
+  id text,
+  cpf text,
+  code text,
+  total numeric,
+  freight numeric
+);
 
-drop table coupons;
+-- items: relação entre order e product
+
+create table items (
+  id_order text,
+  id_product integer,
+  price numeric,
+  quantity integer
+);

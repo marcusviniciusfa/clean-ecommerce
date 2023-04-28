@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 describe('', () => {
   it('não deve criar um pedido com CPF inválido', async () => {
-    const input = { cpf: '987.654.321-01' }
+    const input = { cpf: '987.654.321-01', items: [] }
     try {
       await axios.post('http://localhost:3000/checkout', input)
     } catch (error) {
@@ -13,7 +13,7 @@ describe('', () => {
   })
 
   it('deve criar um pedido vazio', async () => {
-    const input = { cpf: '987.654.321-00' }
+    const input = { cpf: '987.654.321-00', items: [] }
     const response = await axios.post('http://localhost:3000/checkout', input)
     expect(response.status).toBe(201)
     expect(response.data).toHaveProperty('total', 0)
