@@ -1,4 +1,4 @@
-import { Checkout } from './checkout'
+import { Checkout } from './application/use-cases/checkout'
 
 interface Input {
   cpf: string

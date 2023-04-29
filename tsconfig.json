@@ -12,8 +12,9 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "skipLibCheck": true
+    // "types": ["vitest/globals"]
   },
-  "include": ["src", "src/validate-cpf.spec.ts"],
+  "include": ["src", "src/cpf.spec.ts"],
   "exclude": ["src/**/*.spec.ts", "tests"],
   "ts-node": {
     "require": ["dotenv/config"],

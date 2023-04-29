@@ -29,11 +29,11 @@ insert into products (id, description, price, width, height, depth, weight, curr
 create table coupons (
   code text,
   percentage numeric,
-  expires_at timestamp
+  expire_date timestamp
 );
 
-insert into coupons (code, percentage, expires_at) values ('VALE20', 20, now() + interval '1 year');
-insert into coupons (code, percentage, expires_at) values ('BLACKFRIDAY', 50, now() - interval '1 year');
+insert into coupons (code, percentage, expire_date) values ('VALE20', 20, now() + interval '1 year');
+insert into coupons (code, percentage, expire_date) values ('BLACKFRIDAY', 50, now() - interval '1 year');
 
 -- orders
 

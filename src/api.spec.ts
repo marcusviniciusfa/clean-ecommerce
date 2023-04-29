@@ -88,7 +88,7 @@ describe('', () => {
       await axios.post('http://localhost:3000/checkout', input)
     } catch (error) {
       expect((error as AxiosError).response?.status).toBe(400)
-      expect((error as AxiosError).response?.data).toHaveProperty('message', 'duplicated items')
+      expect((error as AxiosError).response?.data).toHaveProperty('message', 'duplicated item')
     }
   })
 

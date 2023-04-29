@@ -1,12 +1,13 @@
 import { randomUUID } from 'node:crypto'
 import sinon from 'sinon'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { CurrencyGateway } from '../../currency-gateway'
+import { CurrencyGatewayHttp } from '../../currency-gateway-http'
+import { Product } from '../../domain/entity/product'
+import { OrderRepositoryDatabase } from '../../order-repository-database'
+import { ProductRepository } from '../../product-repository'
 import { Checkout } from './checkout'
-import { CurrencyGateway } from './currency-gateway'
-import { CurrencyGatewayHttp } from './currency-gateway-http'
 import { GetOrder } from './get-order'
-import { OrderRepositoryDatabase } from './order-repository-database'
-import { ProductRepository } from './product-repository'
 
 describe('', () => {
   let checkout: Checkout
@@ -90,7 +91,7 @@ describe('', () => {
         { id: 1, quantity: 1 },
       ],
     }
-    expect(async () => await checkout.execute(input)).rejects.toThrowError('duplicated items')
+    expect(async () => await checkout.execute(input)).rejects.toThrowError('duplicated item')
   })
 
   it('deve criar um pedido com 1 produto calculando o frete', async () => {
@@ -209,8 +210,8 @@ describe('', () => {
       },
     }
     const productRepositoryFake: ProductRepository = {
-      findById: function (id: number): Promise<any> {
-        return Promise.resolve({ price: 7000 })
+      findById: function (id: number): Promise<Product> {
+        return Promise.resolve(new Product(100, 'a', 7000, 1, 1, 1, 1, 'USD'))
       },
     }
     checkout = new Checkout(currencyGatewayFake, productRepositoryFake)
